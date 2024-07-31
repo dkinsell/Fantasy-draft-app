@@ -19,25 +19,32 @@ const PlayerTable = ({ refreshFlag }) => {
     fetchPlayers();
   };
 
+  const handleReset = () => {
+    setPlayers([]);
+  }
+
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Name</th>
-          <th>Position</th>
-          <th>Position Rank</th>
-          <th>Team</th>
-          <th>Bye</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {players.map(player => (
-          <PlayerComponent key={player._id} player={player} onDraftChange={handleDraftChange} />
-        ))}
-      </tbody>
-    </table>
+    <div>
+      <button onClick={handleReset}>Reset</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Position Rank</th>
+            <th>Team</th>
+            <th>Bye</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {players.map(player => (
+            <PlayerComponent key={player._id} player={player} onDraftChange={handleDraftChange} />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
