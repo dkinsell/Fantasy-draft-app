@@ -7,9 +7,7 @@ const FileUpload = ({ onUploadSuccess }) => {
     setFile(e.target.files[0]);
   };
 
-  const handleUpload = () => {
-    if (!file) return;
-
+  const handleFileUpload = () => {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -17,24 +15,17 @@ const FileUpload = ({ onUploadSuccess }) => {
       method: 'POST',
       body: formData,
     })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
+      .then(response => response.json())
       .then(data => {
-        onUploadSuccess(); // Call the function passed down from the parent component
+        onUploadSuccess(); // Notify parent component about successful upload
       })
-      .catch(error => {
-        console.error('There was an error uploading the file!', error);
-      });
+      .catch(error => console.error('Error:', error));
   };
 
   return (
     <div>
       <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload Document</button>
+      <button onClick={handleFileUpload}>Upload Document</button>
     </div>
   );
 };

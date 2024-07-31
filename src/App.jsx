@@ -1,20 +1,18 @@
-import React, { useState } from "react";
-import FileUpload from "./components/FileUpload";
-import PlayerTable from "./components/PlayerTable";
+import React, { useState } from 'react';
+import FileUpload from './components/FileUpload';
+import PlayerTable from './components/PlayerTable';
 
 const App = () => {
-  const [uploadSuccess, setUploadSuccess] = useState(false);
-  const [uploadKey, setUploadKey] = useState(0); // Key to force re-mounting
+  const [refreshFlag, setRefreshFlag] = useState(false);
 
   const handleUploadSuccess = () => {
-    setUploadSuccess(true);
-    setUploadKey(prevKey => prevKey + 1); // Update key to re-mount PlayerTable
+    setRefreshFlag(!refreshFlag);
   };
 
   return (
     <div>
       <FileUpload onUploadSuccess={handleUploadSuccess} />
-      {uploadSuccess && <PlayerTable key={uploadKey} />}
+      <PlayerTable refreshFlag={refreshFlag} />
     </div>
   );
 };

@@ -1,29 +1,23 @@
-import { set } from "mongoose";
 import React, { useEffect, useState } from "react";
+import PlayerComponent from "./PlayerComponent";
 
-
-const PlayerTable = () => {
+const PlayerTable = ({ refreshFlag }) => {
   const [players, setPlayers] = useState([]);
 
   const fetchPlayers = () => {
     fetch('http://localhost:5000/upload/players')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error ('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      setPlayers(data);
-    })
-    .catch(error => {
-      console.error('There was an error fetching the players!', error);
-    });
+      .then(response => response.json())
+      .then(data => setPlayers(data))
+      .catch(error => console.error('Error:', error));
   }
+
   useEffect(() => {
-    setPlayers([]);
     fetchPlayers();
-  }, []);
+  }, [refreshFlag]);
+
+  const handleDraftChange = () => {
+    fetchPlayers();
+  };
 
   return (
     <table>
@@ -35,18 +29,12 @@ const PlayerTable = () => {
           <th>Position Rank</th>
           <th>Team</th>
           <th>Bye</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        {players.map((player, index) => (
-          <tr key={index}>
-            <td>{player.rank}</td>
-            <td>{player.name}</td>
-            <td>{player.position}</td>
-            <td>{player.positionRank}</td>
-            <td>{player.team}</td>
-            <td>{player.bye}</td>
-          </tr>
+        {players.map(player => (
+          <PlayerComponent key={player._id} player={player} onDraftChange={handleDraftChange} />
         ))}
       </tbody>
     </table>

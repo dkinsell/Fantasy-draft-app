@@ -3,6 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const uploadRoutes = require('./routes/upload');
+const playerRoutes = require('./routes/player')
 require('dotenv').config();
 
 const app = express();
@@ -19,8 +20,9 @@ mongoose.connect(mongoURI)
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.log(err));
 
-// Upload routes
+// Routes
 app.use('/upload', uploadRoutes);
+app.use('/player', playerRoutes)
 
 // Unknown route handler
 app.use((req, res) => res.sendStatus(404));

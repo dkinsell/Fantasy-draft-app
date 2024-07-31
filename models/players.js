@@ -7,7 +7,9 @@ const playerSchema = new Schema({
   position: { type: String, required: true },
   bye: { type: Number, required: true },
   rank: { type: Number, required: true},
-  positionRank: { type: Number, required: true }
+  positionRank: { type: Number, required: true },
+  drafted: { type: Boolean, default: false },
+  draftedBy: { type: String, default: null}
 });
 
 const Player = mongoose.model('Player', playerSchema);
