@@ -42,41 +42,29 @@ const handleFileUpload = (req, res, next) => {
 };
 
 const extractPlayersFromPDF = (text) => {
-  const players = [];
+  // Split the text by newlines
   const lines = text.split('\n');
 
-  lines.forEach(line => {
-    console.log('Processing line:', line); // Debugging log
+  const players = [];
 
-    // Split the line by the pattern that indicates the start of a new player's data
-    const playerEntries = line.split(/(?=\d+\.\s\(\w+\d+\))/);
+  lines.forEach((line, index) => {
+    // Split each line by the pattern that matches the start of a player entry
+    const playerEntries = line.split(/\d+\.\s\(/);
 
-    playerEntries.forEach(entry => {
-      const playerRegex = /^(\d+)\.\s\((\w+)(\d+)\)(.+?),\s([A-Z]{2,3})\$(\d+)/;
-      const match = entry.match(playerRegex);
-
-      if (!match) {
-        console.log('Skipping entry:', entry); // Debugging log
-        return; // Skip entries that don't match the expected format
+    playerEntries.forEach((entry, playerIndex) => {
+      // Skip empty entries resulting from the split
+      if (entry.trim() !== "") {
+        // Add the leading "(" back to the entry for proper parsing later
+        const playerInfo = `(${entry.trim()}`;
+        console.log(`Player ${index + 1}-${playerIndex}: ${playerInfo}`);
+        players.push(playerInfo);
       }
-
-      const [_, rank, position, positionRank, name, team, bye] = match;
-
-      const player = {
-        rank: parseInt(rank),
-        position: position,
-        positionRank: parseInt(positionRank),
-        name: name.trim(),
-        team: team,
-        bye: parseInt(bye)
-      };
-
-      players.push(player);
     });
   });
 
   return players;
 };
+
 
 const extractPlayersFromExcel = (sheet) => {
   const players = xlsx.utils.sheet_to_json(sheet);
@@ -85,7 +73,7 @@ const extractPlayersFromExcel = (sheet) => {
   return players.map((player, index) => {
     const position = player['POS'];
     if (!positionCounts[position]) {
-      positionCounts[position] = 0;
+      positionCounts[position] = 1;
     } else {
       positionCounts[position] += 1;
     }
@@ -101,16 +89,17 @@ const extractPlayersFromExcel = (sheet) => {
   });
 };
 
+
 // Uncomment once mongo is setup
-// const savePlayersToDatabase = (players) => {
-//   return Player.insertMany(players);
-// };
+const savePlayersToDatabase = (players) => {
+  return Player.insertMany(players);
+};
 
 // Test with no Mongo
-const savePlayersToDatabase = (players) => {
-  console.log('Mock saving players to database:', players);
-  return Promise.resolve(); 
-};
+// const savePlayersToDatabase = (players) => {
+//   console.log('Mock saving players to database:', players);
+//   return Promise.resolve(); 
+// };
 
 module.exports = {
   handleFileUpload,
