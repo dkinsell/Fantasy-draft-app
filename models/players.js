@@ -6,7 +6,8 @@ const playerSchema = new Schema({
   team: { type: String, required: true },
   position: { type: String, required: true },
   bye: { type: Number, required: true },
-  rank: { type: Number, required: true}
+  rank: { type: Number, required: true},
+  positionRank: { type: Number, required: true }
 });
 
 const Player = mongoose.model('Player', playerSchema);

@@ -2,7 +2,15 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const uploadController = require('../controllers/uploadController');
+
+// Make sure the
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+  console.log('Created uploads directory');
+}
 
 // Define where the files will be stored
 const destination = (req, file, cb) => {
@@ -22,16 +30,28 @@ const storage = multer.diskStorage({
 
 // Define how the files will be filtered
 const fileFilter = (req, file, cb) => {
-  const filetypes = /pdf|vnd.openxmlformats-officedocument.spreadsheetml.sheet/;
-  const mimetype = filetypes.test(file.mimetype);
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  // Allowed file types
+  const allowedFileTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 
-  if (mimetype && extname) {
-    return cb(null, true); 
+  // Log MIME type and extension
+  console.log('MIME type:', file.mimetype);
+  console.log('File extension:', path.extname(file.originalname).toLowerCase());
+
+  // Check mimetype
+  const isMimeTypeAllowed = allowedFileTypes.includes(file.mimetype);
+  // Check extension
+  const isExtensionAllowed = /\.(pdf|xlsx)$/.test(path.extname(file.originalname).toLowerCase());
+
+  console.log('MIME type allowed:', isMimeTypeAllowed);
+  console.log('Extension allowed:', isExtensionAllowed);
+
+  if (isMimeTypeAllowed && isExtensionAllowed) {
+    return cb(null, true);
   } else {
-    cb(new Error('Unsupported file type')); 
+    cb(new Error('Unsupported file type'), false); // Updated error callback
   }
 };
+
 
 // Create a multer instance with storage and fileFilter
 const upload = multer({
@@ -39,6 +59,17 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
-router.post('/', upload.single('file'), uploadController.handleFileUpload);
+router.use((req, res, next) => {
+  console.log('Request received at:', new Date().toISOString());
+  next();
+});
+
+router.post('/', upload.single('file'), (req, res, next) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded or unsupported file type' });
+  }
+  console.log('File uploaded:', req.file);
+  next();
+}, uploadController.handleFileUpload);
 
 module.exports = router;
