@@ -25,7 +25,6 @@ app.use('/upload', uploadRoutes);
 // Unknown route handler
 app.use((req, res) => res.sendStatus(404));
 
-// Global error handler
 app.use((err, req, res, next) => {
   const defaultErr = {
     log: 'Express error handler caught unknown middleware error',
@@ -33,13 +32,14 @@ app.use((err, req, res, next) => {
     message: { err: 'An error occurred' },
   };
   const errorObj = Object.assign({}, defaultErr, err);
-  console.error(errorObj.log, err); // Log the full error
+  console.error(errorObj.log, errorObj); // Log the full error
   return res.status(errorObj.status).json({
     message: errorObj.message.err,
     error: err.message,
     stack: err.stack, // Include the stack trace for debugging
   });
 });
+
 
 
 app.listen(PORT, () => {

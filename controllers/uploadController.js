@@ -92,7 +92,10 @@ const extractPlayersFromExcel = (sheet) => {
 
 // Uncomment once mongo is setup
 const savePlayersToDatabase = (players) => {
-  return Player.insertMany(players);
+  return Player.deleteMany({}) // Delete all existing players
+    .then(() => {
+      return Player.insertMany(players); // Insert new players
+    });
 };
 
 // Test with no Mongo

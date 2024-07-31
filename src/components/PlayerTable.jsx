@@ -1,14 +1,30 @@
-import React from "react";
+import { set } from "mongoose";
+import React, { useEffect, useState } from "react";
 
-const dummyPlayers = [
-  { rank: 1, name: "Christian McCaffrey", position: "RB", team: "SF", bye: 9, positionRank: 1 },
-  { rank: 2, name: "Breece Hall", position: "RB", team: "NYJ", bye: 12, positionRank: 2 },
-  { rank: 3, name: "Derrick Henry", position: "RB", team: "BAL", bye: 14, positionRank: 3 },
-  { rank: 4, name: "Saquon Barkley", position: "RB", team: "PHI", bye: 5, positionRank: 4 },
-  { rank: 5, name: "Bijan Robinson", position: "RB", team: "ATL", bye: 12, positionRank: 5 }
-];
 
 const PlayerTable = () => {
+  const [players, setPlayers] = useState([]);
+
+  const fetchPlayers = () => {
+    fetch('http://localhost:5000/upload/players')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error ('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      setPlayers(data);
+    })
+    .catch(error => {
+      console.error('There was an error fetching the players!', error);
+    });
+  }
+  useEffect(() => {
+    setPlayers([]);
+    fetchPlayers();
+  }, []);
+
   return (
     <table>
       <thead>
@@ -22,8 +38,8 @@ const PlayerTable = () => {
         </tr>
       </thead>
       <tbody>
-        {dummyPlayers.map((player) => (
-          <tr key={player.rank}>
+        {players.map((player, index) => (
+          <tr key={index}>
             <td>{player.rank}</td>
             <td>{player.name}</td>
             <td>{player.position}</td>

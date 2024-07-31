@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const uploadController = require('../controllers/uploadController');
+const Player = require ('../models/players');
 
 // Make sure the
 const uploadsDir = path.join(__dirname, '../uploads');
@@ -71,5 +72,11 @@ router.post('/', upload.single('file'), (req, res, next) => {
   console.log('File uploaded:', req.file);
   next();
 }, uploadController.handleFileUpload);
+
+router.get('/players', (req, res, next) => {
+  Player.find({})
+    .then(players => res.json(players))
+    .catch(err => next(err)); // Pass any errors to the global error handler
+});
 
 module.exports = router;
