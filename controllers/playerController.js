@@ -46,4 +46,25 @@ playerController.markPlayerAsDraftedByOther = (req, res, next) => {
     });
 };
 
+// Reset a players drafted status
+playerController.resetPlayerDraftStatus = (req, res, next) => {
+  const { id } = req.params;
+
+  Player.findByIdAndUpdate(id, { draftedBy: null }, { new: true })
+    .then((updatedPlayer) => {
+      if (!updatedPlayer) {
+        return res.status(404).json({ message: 'Player not found' });
+      } else {
+        return res.status(200).json(updatedPlayer);
+      }
+    })
+    .catch((err) => {
+      return next({
+        log: 'Error in playerController.resetPlayerDraftStatus',
+        status: 500,
+        message: { err: 'An error occurred while resetting the player draft status' },
+      });
+    });
+};
+
 module.exports = playerController;

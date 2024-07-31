@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 const PlayerComponent = ({ player, onDraftChange }) => {
-  const [draftedByUser, setDraftedByUser] = useState(player.draftedByUser);
-  const [draftedByOther, setDraftedByOther] = useState(player.draftedByOther);
+  const [draftedByUser, setDraftedByUser] = useState(player.draftedBy === 'user');
+  const [draftedByOther, setDraftedByOther] = useState(player.draftedBy === 'other');
 
   const handleDraftByUser = () => {
     fetch(`http://localhost:5000/player/${player._id}/draft/user`, {
@@ -15,6 +15,7 @@ const PlayerComponent = ({ player, onDraftChange }) => {
       .then(response => response.json())
       .then(data => {
         setDraftedByUser(true);
+        setDraftedByOther(false); // Ensure other draft status is reset
         onDraftChange(); // Notify parent component to refresh data
       })
       .catch(error => console.error('Error:', error));
@@ -30,7 +31,21 @@ const PlayerComponent = ({ player, onDraftChange }) => {
     })
       .then(response => response.json())
       .then(data => {
+        setDraftedByUser(false); // Ensure user draft status is reset
         setDraftedByOther(true);
+        onDraftChange(); // Notify parent component to refresh data
+      })
+      .catch(error => console.error('Error:', error));
+  };
+
+  const handleResetDraft = () => {
+    fetch(`http://localhost:5000/player/${player._id}/draft/reset`, {
+      method: 'PATCH',
+    })
+      .then(response => response.json())
+      .then(data => {
+        setDraftedByUser(false); // Reset user draft status
+        setDraftedByOther(false); // Reset other draft status
         onDraftChange(); // Notify parent component to refresh data
       })
       .catch(error => console.error('Error:', error));
@@ -51,6 +66,7 @@ const PlayerComponent = ({ player, onDraftChange }) => {
         <button onClick={handleDraftByOther} disabled={draftedByUser || draftedByOther}>
           Draft by Other
         </button>
+        <button onClick={handleResetDraft}>Reset Draft Status</button>
       </td>
     </tr>
   );
