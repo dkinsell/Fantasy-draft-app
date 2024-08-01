@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import FileUpload from './components/FileUpload';
 import PlayerTable from './components/PlayerTable';
+import Header from './components/Header';
 import './App.scss';
 
 // Main component
@@ -16,6 +17,7 @@ const App = () => {
   // Components for file upload and player table
   return (
     <div>
+      <Header />
       <FileUpload onUploadSuccess={handleUploadSuccess} />
       <PlayerTable refreshFlag={refreshFlag} />
     </div>

@@ -1,7 +1,7 @@
 // App.scss
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto', Arial, sans-serif;
   background-color: #f5f5f5;
   margin: 0;
   padding: 0;
@@ -77,11 +77,11 @@ tr:nth-child(even) {
 }
 
 tr.drafted-by-user {
-  background-color: #d4edda;
+  background-color: #36e45e;
 }
 
 tr.drafted-by-other {
-  background-color: #fff3cd;
+  background-color: #eeee27;
 }
 
 thead {
@@ -89,7 +89,7 @@ thead {
 }
 
 tr:hover {
-  background-color: #f1f1f1;
+  background-color: #bebebe;
 }
 
 .table-container {
@@ -117,4 +117,29 @@ tr:hover {
 
 .file-input {
   display: none;
+}
+
+// Header styling
+.header {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 4px solid #0056b3;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.header p {
+  margin: 5px 0 0;
+  font-size: 16px;
+  color: #e1e1e1;
+  font-style: italic;
 }
