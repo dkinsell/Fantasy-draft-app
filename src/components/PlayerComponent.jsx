@@ -66,12 +66,12 @@ const PlayerComponent = ({ player, onDraftChange }) => {
       <td>{player.bye}</td>
       <td>
         <button onClick={handleDraftByUser} disabled={draftedByUser || draftedByOther} className="draft-btn">
-          Draft by Me
+          Draft by me
         </button>
         <button onClick={handleDraftByOther} disabled={draftedByUser || draftedByOther} className="draft-btn">
-          Draft by Other
+          Draft by other
         </button>
-        <button onClick={handleResetDraft} className="reset-btn">Reset Draft Status</button>
+        <button onClick={handleResetDraft} className="reset-btn">Reset draft status</button>
       </td>
     </tr>
   );
