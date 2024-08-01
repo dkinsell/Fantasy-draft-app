@@ -28,9 +28,19 @@ const FileUpload = ({ onUploadSuccess }) => {
 
   // Component that includes our file upload input and upload document button
   return (
-    <div>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleFileUpload}>Upload Document</button>
+    <div className="file-input-container">
+      <label htmlFor="file-upload" className="file-input-label">
+        Choose File
+      </label>
+      <input
+        id="file-upload"
+        type="file"
+        className="file-input"
+        onChange={handleFileChange}
+      />
+      <button onClick={handleFileUpload} className="upload-btn">
+        Upload Document
+      </button>
     </div>
   );
 };

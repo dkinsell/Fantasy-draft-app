@@ -95,3 +95,26 @@ tr:hover {
 .table-container {
   overflow-x: auto;
 }
+
+.file-input-container {
+  margin-bottom: 20px;
+}
+
+.file-input-label {
+  display: inline-block;
+  padding: 10px 15px;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.file-input-label:hover {
+  background-color: #0056b3;
+}
+
+.file-input {
+  display: none;
+}
