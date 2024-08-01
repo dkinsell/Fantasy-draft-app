@@ -1,6 +1,9 @@
+// This file allows us to test with Postman if the upload route is working correctly BEFOR connecting our DB.
+// Uncomment lines 109 - 112 in uploadController to test.
+
 const mongoose = require('mongoose');
 const Player = require('../models/players');
-require('dotenv').config(); // Load environment variables from .env file
+require('dotenv').config(); 
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {

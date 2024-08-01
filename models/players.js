@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// Create schema with all data types we intend to store
 const playerSchema = new Schema({
   name: { type: String, required: true },
   team: { type: String, required: true },

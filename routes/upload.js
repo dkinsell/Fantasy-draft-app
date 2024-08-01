@@ -1,3 +1,6 @@
+// I spent about 8 hours figuring out Multer for the file upload and it's very finicky.
+// The whole app hinges on this page so iterate at your own risk!
+
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
@@ -6,7 +9,7 @@ const fs = require('fs');
 const uploadController = require('../controllers/uploadController');
 const Player = require ('../models/players');
 
-// Make sure the
+// Check if the upload directory exists and create it if it doesn't
 const uploadsDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
@@ -34,38 +37,43 @@ const fileFilter = (req, file, cb) => {
   // Allowed file types
   const allowedFileTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 
-  // Log MIME type and extension
+  // Log MIME type and extension. MIME is available automatically on the file object
   console.log('MIME type:', file.mimetype);
   console.log('File extension:', path.extname(file.originalname).toLowerCase());
 
-  // Check mimetype
+  // Check mimetype to make sure it's allowed
   const isMimeTypeAllowed = allowedFileTypes.includes(file.mimetype);
-  // Check extension
+  // Check extension to make sure it's allowed
   const isExtensionAllowed = /\.(pdf|xlsx)$/.test(path.extname(file.originalname).toLowerCase());
 
   console.log('MIME type allowed:', isMimeTypeAllowed);
   console.log('Extension allowed:', isExtensionAllowed);
 
+  // Alow the file if mimetype and extensions are valid
   if (isMimeTypeAllowed && isExtensionAllowed) {
     return cb(null, true);
   } else {
-    cb(new Error('Unsupported file type'), false); // Updated error callback
+    // Throw and error if the file isn't supported
+    cb(new Error('Unsupported file type'), false);
   }
 };
 
 
-// Create a multer instance with storage and fileFilter
+// Create a multer instance with storage and fileFilter configurations
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
 });
 
+// Middleware to log each requests timestamp. Not necessary but used when debugging
 router.use((req, res, next) => {
   console.log('Request received at:', new Date().toISOString());
   next();
 });
 
+// Route to handle file upload. Probably could move some functionality to controller but be careful.
 router.post('/', upload.single('file'), (req, res, next) => {
+  // Confirm the file was uploaded with the supported type and pass to controller
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded or unsupported file type' });
   }
@@ -73,10 +81,11 @@ router.post('/', upload.single('file'), (req, res, next) => {
   next();
 }, uploadController.handleFileUpload);
 
+// Route to get all the players from the DB. Probably could move some functionality to controller.
 router.get('/players', (req, res, next) => {
   Player.find({})
-    .then(players => res.json(players))
-    .catch(err => next(err)); // Pass any errors to the global error handler
+    .then(players => res.json(players)) // Return player list as JSON
+    .catch(err => next(err)); 
 });
 
 module.exports = router;

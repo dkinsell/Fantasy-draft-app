@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 
+// PlayerComponent is each row in our table
 const PlayerComponent = ({ player, onDraftChange }) => {
+  // State to track if the player is drafted by the user
   const [draftedByUser, setDraftedByUser] = useState(player.draftedBy === 'user');
+  // State to track if the player is drafted by someone other than the user
   const [draftedByOther, setDraftedByOther] = useState(player.draftedBy === 'other');
 
+  // Function to handle a player being drafted by the user
   const handleDraftByUser = () => {
     fetch(`http://localhost:5000/player/${player._id}/draft/user`, {
       method: 'PATCH',
@@ -14,13 +18,13 @@ const PlayerComponent = ({ player, onDraftChange }) => {
     })
       .then(response => response.json())
       .then(data => {
-        setDraftedByUser(true);
+        setDraftedByUser(true); // Update state of drafted by user to true
         setDraftedByOther(false); // Ensure other draft status is reset
         onDraftChange(); // Notify parent component to refresh data
       })
       .catch(error => console.error('Error:', error));
   };
-
+  // Function to handle a player being drafted by someone other than the user
   const handleDraftByOther = () => {
     fetch(`http://localhost:5000/player/${player._id}/draft/other`, {
       method: 'PATCH',
@@ -31,13 +35,13 @@ const PlayerComponent = ({ player, onDraftChange }) => {
     })
       .then(response => response.json())
       .then(data => {
-        setDraftedByUser(false); // Ensure user draft status is reset
+        setDraftedByUser(false);
         setDraftedByOther(true);
-        onDraftChange(); // Notify parent component to refresh data
+        onDraftChange(); 
       })
       .catch(error => console.error('Error:', error));
   };
-
+// Function to rest the players draft status
   const handleResetDraft = () => {
     fetch(`http://localhost:5000/player/${player._id}/draft/reset`, {
       method: 'PATCH',
@@ -52,6 +56,7 @@ const PlayerComponent = ({ player, onDraftChange }) => {
   };
 
   return (
+    // Change styling depending on draft status
     <tr style={{ backgroundColor: draftedByUser ? 'green' : draftedByOther ? 'yellow' : 'white' }}>
       <td>{player.rank}</td>
       <td>{player.name}</td>

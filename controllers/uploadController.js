@@ -4,9 +4,11 @@ const fs = require('fs');
 const path = require('path');
 const Player = require('../models/players');
 
+// Sends file to appropriate parsing function and then saves returned data
 const handleFileUpload = (req, res, next) => {
   const filePath = path.join(__dirname, '../uploads', req.file.filename);
   
+  // If PDF convert the file to binary in the buffer, extract the data in the helper function, and save to DB
   if (req.file.mimetype === 'application/pdf') {
 
     const dataBuffer = fs.readFileSync(filePath);
@@ -22,6 +24,7 @@ const handleFileUpload = (req, res, next) => {
       .catch(err => {
         next(err);
       });
+  // If excel, isolate the object we want (sheet) and save to DB
   } else if ( req.file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
     
     const workbook = xlsx.readFile(filePath);
@@ -29,6 +32,7 @@ const handleFileUpload = (req, res, next) => {
     const sheet = workbook.Sheets[sheetName];
     const players = extractPlayersFromExcel(sheet);
 
+    // Saves the returned players to our DB and send the appropriate response
     savePlayersToDatabase(players)
       .then(() => {
         res.json({ message: 'File processed and data saved' });
@@ -41,6 +45,7 @@ const handleFileUpload = (req, res, next) => {
   }
 };
 
+// THIS FUNCTION IS NOT WORKING. Not able to isolate individual players properly. Good luck
 const extractPlayersFromPDF = (text) => {
   // Split the text by newlines
   const lines = text.split('\n');
@@ -65,11 +70,13 @@ const extractPlayersFromPDF = (text) => {
   return players;
 };
 
-
+// Function to parse the excel data
 const extractPlayersFromExcel = (sheet) => {
+  // Parses data using a method available to us from xlsx 
   const players = xlsx.utils.sheet_to_json(sheet);
   const positionCounts = {};
 
+  // Maps the data based on the players model
   return players.map((player, index) => {
     const position = player['POS'];
     if (!positionCounts[position]) {
@@ -90,7 +97,7 @@ const extractPlayersFromExcel = (sheet) => {
 };
 
 
-// Uncomment once mongo is setup
+// Use once mongo is setup. Delete to clear DB and then InsertMany to add new players.
 const savePlayersToDatabase = (players) => {
   return Player.deleteMany({}) // Delete all existing players
     .then(() => {
@@ -98,7 +105,7 @@ const savePlayersToDatabase = (players) => {
     });
 };
 
-// Test with no Mongo
+// In combination with verify.js and postman, uncomment this to test saving to a DB w/o Mongo set up
 // const savePlayersToDatabase = (players) => {
 //   console.log('Mock saving players to database:', players);
 //   return Promise.resolve(); 
