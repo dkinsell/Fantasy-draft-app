@@ -56,8 +56,8 @@ const PlayerComponent = ({ player, onDraftChange }) => {
   };
 
   return (
-    // Change styling depending on draft status
-    <tr style={{ backgroundColor: draftedByUser ? 'green' : draftedByOther ? 'yellow' : 'white' }}>
+    // Change row color depending on draft status
+    <tr className={draftedByUser ? 'drafted-by-user' : draftedByOther ? 'drafted-by-other' : ''}>
       <td>{player.rank}</td>
       <td>{player.name}</td>
       <td>{player.position}</td>
@@ -65,13 +65,13 @@ const PlayerComponent = ({ player, onDraftChange }) => {
       <td>{player.team}</td>
       <td>{player.bye}</td>
       <td>
-        <button onClick={handleDraftByUser} disabled={draftedByUser || draftedByOther}>
+        <button onClick={handleDraftByUser} disabled={draftedByUser || draftedByOther} className="draft-btn">
           Draft by Me
         </button>
-        <button onClick={handleDraftByOther} disabled={draftedByUser || draftedByOther}>
+        <button onClick={handleDraftByOther} disabled={draftedByUser || draftedByOther} className="draft-btn">
           Draft by Other
         </button>
-        <button onClick={handleResetDraft}>Reset Draft Status</button>
+        <button onClick={handleResetDraft} className="reset-btn">Reset Draft Status</button>
       </td>
     </tr>
   );

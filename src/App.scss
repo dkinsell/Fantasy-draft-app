@@ -1,3 +1,97 @@
+// App.scss
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
 h1 {
-  color: blue;
+  text-align: center;
+  color: #333;
+}
+
+button {
+  padding: 10px 15px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button.upload-btn {
+  background-color: #007bff;
+  color: #fff;
+}
+
+button.draft-btn {
+  background-color: #28a745;
+  color: #fff;
+}
+
+button.reset-btn {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f4f4f4;
+  border-top: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr.drafted-by-user {
+  background-color: #d4edda;
+}
+
+tr.drafted-by-other {
+  background-color: #fff3cd;
+}
+
+thead {
+  background-color: #e9ecef;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+.table-container {
+  overflow-x: auto;
 }

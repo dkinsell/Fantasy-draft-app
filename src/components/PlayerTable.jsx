@@ -29,8 +29,8 @@ const PlayerTable = ({ refreshFlag }) => {
   }
 
   return (
-    <div>
-      <button onClick={handleReset}>Reset</button>
+    <div className="table-container">
+      <button onClick={handleReset} className="reset-btn">Reset</button>
       <table>
         <thead>
           <tr>

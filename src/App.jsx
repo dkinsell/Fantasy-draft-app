@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import FileUpload from './components/FileUpload';
 import PlayerTable from './components/PlayerTable';
+import './App.scss';
 
 // Main component
 const App = () => {
