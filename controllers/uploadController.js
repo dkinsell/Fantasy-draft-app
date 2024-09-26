@@ -1,11 +1,35 @@
+const pool = require('../config/db');
 const xlsx = require('xlsx');
 const pdfParse = require('pdf-parse');
 const fs = require('fs');
 const path = require('path');
-const Player = require('../models/players');
+// const Player = require('../models/players');
+
+const uploadController = {};
+
+// Save players to the DB
+const savePlayersToDatabase = (players) => {
+  const promises = players.map(player => {
+    const query = `
+      INSERT INTO players (name, team_id, position, bye, rank, positionRank, drafted, draftedBy)
+      VALUES ($1, $2, $3, $4, $5, $6, false, NULL)
+      RETURNING *;
+    `;
+    const values = [
+      player.name,
+      player.team_id,
+      player.position,
+      player.bye,
+      player.rank,
+      player.positionRank
+    ];
+    return pool.query(query, values);
+  });
+  return Promise.all(promises);
+};
 
 // Sends file to appropriate parsing function and then saves returned data
-const handleFileUpload = (req, res, next) => {
+uploadController.handleFileUpload = (req, res, next) => {
   const filePath = path.join(__dirname, '../uploads', req.file.filename);
   
   // If PDF convert the file to binary in the buffer, extract the data in the helper function, and save to DB
@@ -86,30 +110,15 @@ const extractPlayersFromExcel = (sheet) => {
     }
 
     return {
-      rank: player['#'],
       name: player['Player'],
       position: position,
-      positionRank: positionCounts[position],
       team: player['Team'],
-      bye: player['Bye']
+      bye: player['Bye'],
+      rank: player['#'],
+      positionRank: positionCounts[position],
     };
   });
 };
-
-
-// Use once mongo is setup. Delete to clear DB and then InsertMany to add new players.
-const savePlayersToDatabase = (players) => {
-  return Player.deleteMany({}) // Delete all existing players
-    .then(() => {
-      return Player.insertMany(players); // Insert new players
-    });
-};
-
-// In combination with verify.js and postman, uncomment this to test saving to a DB w/o Mongo set up
-// const savePlayersToDatabase = (players) => {
-//   console.log('Mock saving players to database:', players);
-//   return Promise.resolve(); 
-// };
 
 module.exports = {
   handleFileUpload,
