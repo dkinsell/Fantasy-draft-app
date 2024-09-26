@@ -20,7 +20,7 @@ app.use(bodyParser.json()); // Parse incoming JSON
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded data
 
 // Run the table creation script
-// createTables(pool);
+createTables(pool);
 
 //MongoDB connection
 // const mongoURI = process.env.MONGO_URI;
