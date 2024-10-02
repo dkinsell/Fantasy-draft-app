@@ -120,6 +120,4 @@ const extractPlayersFromExcel = (sheet) => {
   });
 };
 
-module.exports = {
-  handleFileUpload,
-}
+module.exports = uploadController;
