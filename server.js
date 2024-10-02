@@ -1,11 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const uploadRoutes = require('./routes/upload');
 const playerRoutes = require('./routes/player')
+const createTables = require('./scripts/createTables');
 require('dotenv').config();
 
+// Import the DB pool
+const pool = require('./config/db');
+
+// Initialize express app
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -14,11 +19,14 @@ app.use(cors()); // Enable CORS
 app.use(bodyParser.json()); // Parse incoming JSON
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded data
 
+// Run the table creation script
+createTables(pool);
+
 //MongoDB connection
-const mongoURI = process.env.MONGO_URI;
-mongoose.connect(mongoURI)
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.log(err));
+// const mongoURI = process.env.MONGO_URI;
+// mongoose.connect(mongoURI)
+// .then(() => console.log('MongoDB connected'))
+// .catch(err => console.log(err));
 
 // Routes
 app.use('/upload', uploadRoutes); // Routes for handling file uploads
