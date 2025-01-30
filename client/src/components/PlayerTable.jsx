@@ -7,11 +7,21 @@ const PlayerTable = ({ refreshFlag }) => {
 
   // Function to fetch the list of players from the BE
   const fetchPlayers = () => {
-    fetch('http://localhost:5000/upload/players')
-      .then(response => response.json())
-      .then(data => setPlayers(data))
-      .catch(error => console.error('Error:', error));
-  }
+    fetch("http://localhost:5000/api/players")
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setPlayers(data.players);
+        } else {
+          console.error("Error fetching players:", data.error);
+          setPlayers([]);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setPlayers([]);
+      });
+  };
 
   // Hook to fetch players whenever the refresh flag changes
   useEffect(() => {
@@ -26,11 +36,13 @@ const PlayerTable = ({ refreshFlag }) => {
   // Handle reseting of the player list to empty state
   const handleReset = () => {
     setPlayers([]);
-  }
+  };
 
   return (
     <div className="table-container">
-      <button onClick={handleReset} className="reset-btn">Reset</button>
+      <button onClick={handleReset} className="reset-btn">
+        Reset
+      </button>
       <table>
         <thead>
           <tr>
@@ -44,10 +56,18 @@ const PlayerTable = ({ refreshFlag }) => {
           </tr>
         </thead>
         <tbody>
-          {players.map(player => (
-            // Render each player row using the PlayerComponent
-            <PlayerComponent key={player._id} player={player} onDraftChange={handleDraftChange} />
-          ))}
+          {Array.isArray(players) &&
+            players.map((player) => (
+              // Render each player row using the PlayerComponent
+              <PlayerComponent
+                key={player.id} // Changed from _id to id for PostgreSQL
+                player={{
+                  ...player,
+                  team: player.team_name, // Use team_name from the join
+                }}
+                onDraftChange={handleDraftChange}
+              />
+            ))}
         </tbody>
       </table>
     </div>

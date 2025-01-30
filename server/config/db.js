@@ -1,11 +1,11 @@
-const { Pool } = require('pg');
-require('dotenv').config();
+const { Pool } = require("pg");
+require("dotenv").config();
 
 // PostgreSQL connection
 const pool = new Pool({
   user: process.env.PG_USER,
   host: process.env.PG_HOST,
-  database: process.env.PG_DATABASE,
+  database: "fantasy_draft",
   password: process.env.PG_PASSWORD,
   port: process.env.PG_PORT,
 });
@@ -13,9 +13,9 @@ const pool = new Pool({
 // Test DB connection
 pool.connect((err, client, release) => {
   if (err) {
-    console.error('Error acquiring client', err.stack);
+    console.error("Error acquiring client", err.stack);
   } else {
-    console.log('Connected to PostgreSQL successfully');
+    console.log("Connected to PostgreSQL successfully");
   }
   release();
 });

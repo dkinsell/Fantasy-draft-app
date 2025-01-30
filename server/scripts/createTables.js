@@ -1,4 +1,4 @@
-const { Pool } = require('pg');
+const { Pool } = require("pg");
 
 // Create the teams table
 const teamsTable = `
@@ -19,19 +19,38 @@ const playersTable = `
     rank INT,
     positionRank INT,
     drafted BOOLEAN DEFAULT FALSE,
-    draftedBy VARCHAR(100)
+    draftedBy VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+`;
+
+// Insert NFL teams
+const insertTeams = `
+  INSERT INTO teams (name)
+  SELECT team 
+  FROM (VALUES 
+    ('ARI'), ('ATL'), ('BAL'), ('BUF'), ('CAR'), ('CHI'), ('CIN'), ('CLE'),
+    ('DAL'), ('DEN'), ('DET'), ('GB'), ('HOU'), ('IND'), ('JAX'), ('KC'),
+    ('LAC'), ('LAR'), ('LV'), ('MIA'), ('MIN'), ('NE'), ('NO'), ('NYG'),
+    ('NYJ'), ('PHI'), ('PIT'), ('SEA'), ('SF'), ('TB'), ('TEN'), ('WAS')
+  ) AS t(team)
+  WHERE NOT EXISTS (
+    SELECT 1 FROM teams WHERE name = t.team
   );
 `;
 
 const createTables = async (pool) => {
   try {
     await pool.query(teamsTable);
-    console.log('Teams table created');
+    console.log("Teams table created");
 
     await pool.query(playersTable);
-    console.log('Players table created');
+    console.log("Players table created");
+
+    await pool.query(insertTeams);
+    console.log("Teams data inserted");
   } catch (err) {
-    console.error('Error creating tables', err)
+    console.error("Error creating tables", err);
   }
 };
 
