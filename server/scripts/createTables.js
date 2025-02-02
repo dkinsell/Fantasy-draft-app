@@ -17,7 +17,7 @@ const playersTable = `
     team_id INT REFERENCES teams(id) ON DELETE SET NULL,
     bye INT,
     rank INT,
-    positionRank INT,
+    positionrank VARCHAR(10),
     drafted BOOLEAN DEFAULT FALSE,
     draftedBy VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

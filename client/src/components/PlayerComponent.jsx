@@ -80,12 +80,14 @@ const PlayerComponent = ({ player, onDraftChange }) => {
     ? "drafted-by-other"
     : "";
 
+  // console.log("Player data:", player); // Log the player data
+
   return (
     <tr className={rowClass}>
       <td>{player.rank}</td>
       <td>{player.name}</td>
       <td>{player.position}</td>
-      <td>{player.positionRank}</td>
+      <td>{player.positionrank}</td>
       <td>{player.team}</td>
       <td>{player.bye}</td>
       <td>

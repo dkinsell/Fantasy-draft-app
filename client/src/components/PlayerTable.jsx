@@ -60,10 +60,11 @@ const PlayerTable = ({ refreshFlag }) => {
             players.map((player) => (
               // Render each player row using the PlayerComponent
               <PlayerComponent
-                key={player.id} // Changed from _id to id for PostgreSQL
+                key={player.id}
                 player={{
                   ...player,
-                  team: player.team_name, // Use team_name from the join
+                  team: player.team_name,
+                  positionRank: player.positionRank,
                 }}
                 onDraftChange={handleDraftChange}
               />

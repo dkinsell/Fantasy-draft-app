@@ -27,7 +27,7 @@ const savePlayersToDatabase = async (players) => {
 
       await client.query(
         `
-        INSERT INTO players (name, team_id, position, bye, rank, positionRank)
+        INSERT INTO players (name, team_id, position, bye, rank, positionrank)
         VALUES ($1, $2, $3, $4, $5, $6)
       `,
         [
@@ -36,7 +36,7 @@ const savePlayersToDatabase = async (players) => {
           player.position,
           player.bye,
           player.rank,
-          player.positionRank,
+          player.positionrank,
         ]
       );
     }
@@ -48,6 +48,34 @@ const savePlayersToDatabase = async (players) => {
   } finally {
     client.release();
   }
+};
+
+// Function to parse the excel data
+const extractPlayersFromExcel = (sheet) => {
+  const rawData = xlsx.utils.sheet_to_json(sheet, {
+    header: 1,
+    blankrows: false,
+    range: 1,
+  });
+
+  const positionCounts = {};
+
+  return rawData
+    .filter((row) => row.length > 0)
+    .map((row) => {
+      const position = row[2]; // Assuming position is in the third column
+      positionCounts[position] = (positionCounts[position] || 0) + 1; // Increment count for the position
+
+      return {
+        name: row[1], // Player name
+        position: position, // Position
+        team: row[3], // Team
+        bye: row[4], // Bye week
+        rank: row[0], // Rank from the sheet
+        positionrank: `${position}${positionCounts[position]}`, // Format as PositionRank (e.g., RB1)
+      };
+    })
+    .filter((player) => player.name && player.position); // Filter out any invalid rows
 };
 
 // Sends file to appropriate parsing function and then saves returned data
@@ -75,6 +103,7 @@ fileUploadController.handleFileUpload = async (req, res, next) => {
       });
     }
   } catch (err) {
+    console.error("Error details:", err);
     next({
       log: "Error in uploadController.handleFileUpload",
       status: 500,
@@ -85,34 +114,6 @@ fileUploadController.handleFileUpload = async (req, res, next) => {
       if (err) console.error("Error deleting file:", err);
     });
   }
-};
-
-// Function to parse the excel data
-const extractPlayersFromExcel = (sheet) => {
-  const rawData = xlsx.utils.sheet_to_json(sheet, {
-    header: 1,
-    blankrows: false,
-    range: 1,
-  });
-
-  const positionCounts = {};
-
-  return rawData
-    .filter((row) => row.length > 0)
-    .map((row) => {
-      const position = row[2];
-      positionCounts[position] = (positionCounts[position] || 0) + 1;
-
-      return {
-        name: row[1],
-        position: row[2],
-        team: row[3],
-        bye: row[4],
-        rank: row[0],
-        positionRank: positionCounts[position],
-      };
-    })
-    .filter((player) => player.name && player.position);
 };
 
 module.exports = fileUploadController;
