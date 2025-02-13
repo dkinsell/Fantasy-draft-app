@@ -73,40 +73,39 @@ const PlayerComponent = ({ player, onDraftChange }) => {
       .catch((error) => console.error("Error:", error));
   };
 
-  // Determine row class based on draft status
   const rowClass = draftedByUser
-    ? "drafted-by-user"
+    ? "bg-green-100 hover:bg-green-200 transition-colors duration-300"
     : draftedByOther
-    ? "drafted-by-other"
-    : "";
+    ? "bg-red-100 hover:bg-red-200 transition-colors duration-300"
+    : "bg-white hover:bg-gray-100 transition-colors duration-300";
 
   return (
     <tr className={rowClass}>
-      <td>{player.rank}</td>
-      <td>{player.name}</td>
-      <td>{player.position}</td>
-      <td>{player.positionrank}</td>
-      <td>{player.team}</td>
-      <td>{player.bye}</td>
-      <td>
+      <td className="p-3 border-b border-gray-200">{player.rank}</td>
+      <td className="p-3 border-b border-gray-200">{player.name}</td>
+      <td className="p-3 border-b border-gray-200">{player.position}</td>
+      <td className="p-3 border-b border-gray-200">{player.positionrank}</td>
+      <td className="p-3 border-b border-gray-200">{player.team}</td>
+      <td className="p-3 border-b border-gray-200">{player.bye}</td>
+      <td className="p-3 border-b border-gray-200">
         <button
           onClick={handleDraftByUser}
           disabled={draftedByUser || draftedByOther}
-          className="draft-btn"
+          className="px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed mr-2"
         >
           Draft by me
         </button>
         <button
           onClick={handleDraftByOther}
           disabled={draftedByUser || draftedByOther}
-          className="draft-btn"
+          className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed mr-2"
         >
           Draft by other
         </button>
         <button
           onClick={handleResetDraft}
           disabled={!draftedByUser && !draftedByOther}
-          className="reset-btn"
+          className="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Reset draft status
         </button>

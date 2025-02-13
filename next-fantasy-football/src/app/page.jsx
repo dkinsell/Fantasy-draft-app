@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import FileUpload from "../components/FileUpload";
 import PlayerTable from "../components/PlayerTable";
-import "./globals.css";
 
 export default function HomePage() {
   // State to manage when the player table should refresh

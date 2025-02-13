@@ -5,12 +5,10 @@ import React, { useState } from "react";
 const FileUpload = ({ onUploadSuccess }) => {
   const [file, setFile] = useState(null);
 
-  // Event handler to update file state with the selected file
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  // Event handler for file upload
   const handleUpload = async () => {
     if (!file) return;
 
@@ -32,19 +30,24 @@ const FileUpload = ({ onUploadSuccess }) => {
     }
   };
 
-  // Component that includes our file upload input and upload document button
   return (
-    <div className="file-input-container">
-      <label htmlFor="file-upload" className="file-input-label">
+    <div className="mb-5">
+      <label
+        htmlFor="file-upload"
+        className="inline-block px-4 py-2.5 mr-2.5 border border-gray-300 rounded-md bg-blue-500 text-white cursor-pointer hover:bg-blue-700 transition-colors duration-300"
+      >
         Choose File
       </label>
       <input
         id="file-upload"
         type="file"
-        className="file-input"
+        className="hidden"
         onChange={handleFileChange}
       />
-      <button onClick={handleUpload} className="upload-btn">
+      <button
+        onClick={handleUpload}
+        className="px-4 py-2.5 bg-blue-500 text-white rounded-md hover:opacity-80 transition-colors duration-300"
+      >
         Upload Document
       </button>
     </div>

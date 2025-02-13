@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* :root {
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -94,6 +94,7 @@ tr:nth-child(even) {
 tr.drafted-by-user {
   background-color: rgba(0, 255, 0, 0.2);
 }
+
 tr.drafted-by-user:hover {
   background-color: rgba(0, 255, 0, 0.3);
 }
@@ -140,7 +141,6 @@ tr:hover {
   display: none;
 }
 
-/* Header styling */
 .header {
   background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
   color: #fff;
@@ -173,4 +173,4 @@ tr:hover {
 .reset-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
+} */

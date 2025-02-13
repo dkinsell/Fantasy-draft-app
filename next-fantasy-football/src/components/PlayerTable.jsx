@@ -41,20 +41,37 @@ const PlayerTable = ({ refreshFlag }) => {
   };
 
   return (
-    <div className="table-container">
-      <button onClick={handleReset} className="reset-btn">
+    <div className="overflow-x-auto">
+      <button
+        onClick={handleReset}
+        className="px-4 py-2.5 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-300 mb-4"
+      >
         Reset
       </button>
-      <table>
-        <thead>
+      <table className="w-full border-collapse mt-5 border border-gray-300">
+        <thead className="bg-gray-100">
           <tr>
-            <th>Rank</th>
-            <th>Name</th>
-            <th>Position</th>
-            <th>Position Rank</th>
-            <th>Team</th>
-            <th>Bye</th>
-            <th>Actions</th>
+            <th className="p-3 text-left border-b border-gray-300 font-semibold">
+              Rank
+            </th>
+            <th className="p-3 text-left border-b border-gray-300 font-semibold">
+              Name
+            </th>
+            <th className="p-3 text-left border-b border-gray-300 font-semibold">
+              Position
+            </th>
+            <th className="p-3 text-left border-b border-gray-300 font-semibold">
+              Position Rank
+            </th>
+            <th className="p-3 text-left border-b border-gray-300 font-semibold">
+              Team
+            </th>
+            <th className="p-3 text-left border-b border-gray-300 font-semibold">
+              Bye
+            </th>
+            <th className="p-3 text-left border-b border-gray-300 font-semibold">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
