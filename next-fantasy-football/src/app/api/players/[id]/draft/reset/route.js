@@ -1,8 +1,9 @@
 import { updatePlayerDraftStatus } from "@/lib/playerDraftController";
 
-export async function PATCH(request, { params }) {
+export const PATCH = async (request, context) => {
   try {
-    const { id } = params;
+    const { params } = context;
+    const { id } = await params;
     const result = await updatePlayerDraftStatus(id, null);
     return new Response(JSON.stringify(result), {
       status: result.success ? 200 : 404,
@@ -21,4 +22,4 @@ export async function PATCH(request, { params }) {
       }
     );
   }
-}
+};
