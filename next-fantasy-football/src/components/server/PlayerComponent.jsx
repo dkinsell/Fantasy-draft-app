@@ -3,17 +3,19 @@ import React, { useState } from "react";
 import PlayerActions from "../client/PlayerActions";
 
 const PlayerComponent = ({ player }) => {
-  // Determine if player is drafted
-  const isDraftedByUser = player.draftedby === "user" || player.drafted_by === "user";
-  const isDraftedByOther = player.draftedby === "other" || player.drafted_by === "other";
+  // Local state to track draft status
+  const [draftStatus, setDraftStatus] = useState(player.draftedby || player.drafted_by);
+  
+  // Compute derived states
+  const isDraftedByUser = draftStatus === "user";
+  const isDraftedByOther = draftStatus === "other";
 
   // Function to handle draft status changes
   const handleDraftStatusChange = (status) => {
-    // Force a re-render of the component when draft status changes
-    window.location.reload();
+    setDraftStatus(status);
   };
 
-  // Determine the row styling based on draft status - now computed on the server
+  // Determine the row styling based on draft status
   const rowClass = isDraftedByUser
     ? "bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30 transition-colors duration-300"
     : isDraftedByOther
