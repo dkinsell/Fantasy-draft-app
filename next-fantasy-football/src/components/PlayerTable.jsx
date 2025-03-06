@@ -1,39 +1,39 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import PlayerComponent from "./PlayerComponent";
 
-const PlayerTable = ({ refreshFlag }) => {
-  const [players, setPlayers] = useState([]);
-  const [loading, setLoading] = useState(true);
+const PlayerTable = ({ initialPlayers, refreshFlag }) => {
+  const [players, setPlayers] = useState(initialPlayers);
+  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [positionFilter, setPositionFilter] = useState("All");
 
-  // Function to fetch the list of players from the BE
-  const fetchPlayers = useCallback(() => {
-    setLoading(true);
-    fetch("/api/players")
-      .then((response) => response.json())
-      .then((data) => {
+  // Only fetch new data when refresh is triggered
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      if (!refreshFlag) return;
+      
+      setLoading(true);
+      try {
+        const response = await fetch("/api/players");
+        const data = await response.json();
+        
         if (data.success) {
           setPlayers(data.players);
         } else {
           console.error("Error fetching players:", data.error);
           setPlayers([]);
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error:", error);
         setPlayers([]);
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
-  }, []);
+      }
+    };
 
-  // Hook to fetch players whenever the refresh flag changes
-  useEffect(() => {
     fetchPlayers();
-  }, [refreshFlag, fetchPlayers]);
+  }, [refreshFlag]);
 
   // Handle reseting of the player list to empty state
   const handleReset = () => {

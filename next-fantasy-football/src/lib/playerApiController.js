@@ -28,3 +28,13 @@ export async function getAllPlayers() {
     return { success: false, message: "Failed to fetch players" };
   }
 }
+
+export async function getServerSidePlayersData() {
+  const playersData = await getAllPlayers();
+  
+  if (!playersData.success) {
+    throw new Error('Failed to load players data');
+  }
+
+  return playersData.players;
+}
