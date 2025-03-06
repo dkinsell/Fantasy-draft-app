@@ -1,16 +1,22 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const PlayerComponent = ({ player, onDraftChange }) => {
   // State to track if the player is drafted by the user
   const [draftedByUser, setDraftedByUser] = useState(
-    player.draftedBy === "user"
+    player.draftedby === "user" || player.drafted_by === "user"
   );
   // State to track if the player is drafted by someone other than the user
   const [draftedByOther, setDraftedByOther] = useState(
-    player.draftedBy === "other"
+    player.draftedby === "other" || player.drafted_by === "other"
   );
   const [isLoading, setIsLoading] = useState(false);
+
+  // Sync state with props when player data changes
+  useEffect(() => {
+    setDraftedByUser(player.draftedby === "user" || player.drafted_by === "user");
+    setDraftedByOther(player.draftedby === "other" || player.drafted_by === "other");
+  }, [player]);
 
   // Function to handle a player being drafted by the user
   const handleDraftByUser = () => {
@@ -21,7 +27,12 @@ const PlayerComponent = ({ player, onDraftChange }) => {
         "Content-Type": "application/json",
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         if (data.success) {
           setDraftedByUser(true);
@@ -31,7 +42,10 @@ const PlayerComponent = ({ player, onDraftChange }) => {
           console.error("Failed to update draft status:", data.error);
         }
       })
-      .catch((error) => console.error("Error:", error))
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Failed to update draft status. Please try again.");
+      })
       .finally(() => setIsLoading(false));
   };
 
@@ -44,7 +58,12 @@ const PlayerComponent = ({ player, onDraftChange }) => {
         "Content-Type": "application/json",
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         if (data.success) {
           setDraftedByUser(false);
@@ -54,7 +73,10 @@ const PlayerComponent = ({ player, onDraftChange }) => {
           console.error("Failed to update draft status:", data.error);
         }
       })
-      .catch((error) => console.error("Error:", error))
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Failed to update draft status. Please try again.");
+      })
       .finally(() => setIsLoading(false));
   };
 
@@ -64,7 +86,12 @@ const PlayerComponent = ({ player, onDraftChange }) => {
     fetch(`/api/players/${player.id}/draft/reset`, {
       method: "PATCH",
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         if (data.success) {
           setDraftedByUser(false);
@@ -74,9 +101,16 @@ const PlayerComponent = ({ player, onDraftChange }) => {
           console.error("Failed to reset draft status:", data.error);
         }
       })
-      .catch((error) => console.error("Error:", error))
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Failed to reset draft status. Please try again.");
+      })
       .finally(() => setIsLoading(false));
   };
+
+  // Log player data for debugging
+  console.log("Player data:", player);
+  console.log("Draft status:", { draftedByUser, draftedByOther });
 
   // Determine the row styling based on draft status
   const rowClass = draftedByUser
