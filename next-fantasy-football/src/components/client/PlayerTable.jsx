@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import PlayerComponent from "./PlayerComponent";
+import PlayerComponent from "../server/PlayerComponent";
 
 const PlayerTable = ({ initialPlayers, refreshFlag }) => {
   const [players, setPlayers] = useState(initialPlayers);

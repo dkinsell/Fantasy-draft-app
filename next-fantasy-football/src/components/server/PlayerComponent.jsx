@@ -1,5 +1,5 @@
 import React from "react";
-import PlayerActions from "./PlayerActions";
+import PlayerActions from "../client/PlayerActions";
 
 const PlayerComponent = ({ player }) => {
   // Determine if player is drafted

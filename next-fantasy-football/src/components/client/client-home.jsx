@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import FileUpload from "../components/FileUpload";
-import PlayerTable from "../components/PlayerTable";
+import FileUpload from "./FileUpload";
+import PlayerTable from "./PlayerTable";
 
 export function ClientHome({ initialPlayers }) {
   const [refreshFlag, setRefreshFlag] = useState(false);

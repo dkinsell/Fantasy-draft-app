@@ -1,5 +1,5 @@
 import { getServerSidePlayersData } from "../lib/playerApiController";
-import { ClientHome } from "./client-home";
+import { ClientHome } from "../components/client/client-home";
 
 export default async function HomePage() {
   // Fetch data on the server
