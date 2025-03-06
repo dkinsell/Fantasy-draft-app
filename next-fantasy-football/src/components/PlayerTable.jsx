@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import PlayerComponent from "./PlayerComponent";
 
 const PlayerTable = ({ refreshFlag }) => {
@@ -9,7 +9,7 @@ const PlayerTable = ({ refreshFlag }) => {
   const [positionFilter, setPositionFilter] = useState("All");
 
   // Function to fetch the list of players from the BE
-  const fetchPlayers = () => {
+  const fetchPlayers = useCallback(() => {
     setLoading(true);
     fetch("/api/players")
       .then((response) => response.json())
@@ -28,17 +28,12 @@ const PlayerTable = ({ refreshFlag }) => {
       .finally(() => {
         setLoading(false);
       });
-  };
+  }, []);
 
   // Hook to fetch players whenever the refresh flag changes
   useEffect(() => {
     fetchPlayers();
-  }, [refreshFlag]);
-
-  // Handle changes in draft status and refresh the players list
-  const handleDraftChange = () => {
-    fetchPlayers();
-  };
+  }, [refreshFlag, fetchPlayers]);
 
   // Handle reseting of the player list to empty state
   const handleReset = () => {
@@ -85,7 +80,6 @@ const PlayerTable = ({ refreshFlag }) => {
               className="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
           </div>
-
           <select
             value={positionFilter}
             onChange={(e) => setPositionFilter(e.target.value)}
@@ -143,7 +137,6 @@ const PlayerTable = ({ refreshFlag }) => {
                     team: player.team_name,
                     positionRank: player.positionrank,
                   }}
-                  onDraftChange={handleDraftChange}
                 />
               ))}
             </tbody>

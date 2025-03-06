@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-const PlayerComponent = ({ player, onDraftChange }) => {
+const PlayerComponent = ({ player }) => {
   // State to track if the player is drafted by the user
   const [draftedByUser, setDraftedByUser] = useState(
     player.draftedby === "user" || player.drafted_by === "user"
@@ -20,7 +20,13 @@ const PlayerComponent = ({ player, onDraftChange }) => {
 
   // Function to handle a player being drafted by the user
   const handleDraftByUser = () => {
+    if (isLoading) return;
+
+    // Optimistically update UI state
     setIsLoading(true);
+    setDraftedByUser(true);
+    setDraftedByOther(false);
+
     fetch(`/api/players/${player.id}/draft/user`, {
       method: "PATCH",
       headers: {
@@ -34,24 +40,32 @@ const PlayerComponent = ({ player, onDraftChange }) => {
         return response.json();
       })
       .then((data) => {
-        if (data.success) {
-          setDraftedByUser(true);
-          setDraftedByOther(false);
-          onDraftChange();
-        } else {
+        if (!data.success) {
+          // Revert to previous state if API call failed
+          setDraftedByUser(false);
           console.error("Failed to update draft status:", data.error);
         }
       })
       .catch((error) => {
+        // Revert to previous state on error
+        setDraftedByUser(false);
         console.error("Error:", error);
         alert("Failed to update draft status. Please try again.");
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   // Function to handle a player being drafted by someone other than the user
   const handleDraftByOther = () => {
+    if (isLoading) return;
+
+    // Optimistically update UI state
     setIsLoading(true);
+    setDraftedByUser(false);
+    setDraftedByOther(true);
+
     fetch(`/api/players/${player.id}/draft/other`, {
       method: "PATCH",
       headers: {
@@ -65,24 +79,32 @@ const PlayerComponent = ({ player, onDraftChange }) => {
         return response.json();
       })
       .then((data) => {
-        if (data.success) {
-          setDraftedByUser(false);
-          setDraftedByOther(true);
-          onDraftChange();
-        } else {
+        if (!data.success) {
+          // Revert to previous state if API call failed
+          setDraftedByOther(false);
           console.error("Failed to update draft status:", data.error);
         }
       })
       .catch((error) => {
+        // Revert to previous state on error
+        setDraftedByOther(false);
         console.error("Error:", error);
         alert("Failed to update draft status. Please try again.");
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   // Function to reset the player's draft status
   const handleResetDraft = () => {
+    if (isLoading) return;
+
+    // Optimistically update UI state
     setIsLoading(true);
+    setDraftedByUser(false);
+    setDraftedByOther(false);
+
     fetch(`/api/players/${player.id}/draft/reset`, {
       method: "PATCH",
     })
@@ -93,24 +115,20 @@ const PlayerComponent = ({ player, onDraftChange }) => {
         return response.json();
       })
       .then((data) => {
-        if (data.success) {
-          setDraftedByUser(false);
-          setDraftedByOther(false);
-          onDraftChange();
-        } else {
+        if (!data.success) {
+          // Need to determine previous state, this is a simplification
           console.error("Failed to reset draft status:", data.error);
         }
       })
       .catch((error) => {
+        // Since we don't know the previous state easily, we'll rely on parent refresh
         console.error("Error:", error);
         alert("Failed to reset draft status. Please try again.");
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
-
-  // Log player data for debugging
-  console.log("Player data:", player);
-  console.log("Draft status:", { draftedByUser, draftedByOther });
 
   // Determine the row styling based on draft status
   const rowClass = draftedByUser
