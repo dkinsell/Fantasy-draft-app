@@ -4,41 +4,62 @@ import pool from "./db";
 
 const fileUploadController = {};
 
-// Function to get team_id from team abbreviation
-const getTeamId = async (teamAbbr) => {
-  const result = await pool.query("SELECT id FROM teams WHERE name = $1", [
-    teamAbbr,
-  ]);
-  return result.rows[0]?.id;
+// Cache for team IDs to avoid repeated queries
+let teamCache = null;
+
+// Function to get all team IDs at once
+const getTeamIds = async () => {
+  if (teamCache) return teamCache;
+  
+  const result = await pool.query("SELECT id, name FROM teams");
+  teamCache = result.rows.reduce((acc, team) => {
+    acc[team.name] = team.id;
+    return acc;
+  }, {});
+  
+  return teamCache;
 };
 
-// Save players to the DB
+// Save players to the DB using batch inserts
 const savePlayersToDatabase = async (players) => {
   const client = await pool.connect();
-
   try {
     await client.query("BEGIN");
     
-    for (const player of players) {
-      const team_id = await getTeamId(player.team);
-      if (!team_id) continue;
-
-      await client.query(
-        `
-        INSERT INTO players (name, team_id, position, bye, rank, positionrank)
-        VALUES ($1, $2, $3, $4, $5, $6)
-      `,
-        [
-          player.name,
-          team_id,
-          player.position,
-          player.bye,
-          player.rank,
-          player.positionrank,
-        ]
+    // Get all team IDs in a single query
+    const teamIds = await getTeamIds();
+    
+    // Prepare batch values for insertion
+    const values = [];
+    const placeholders = [];
+    let paramIndex = 1;
+    
+    players.forEach(player => {
+      const team_id = teamIds[player.team];
+      if (!team_id) return; // Skip if team not found
+      
+      values.push(
+        player.name,
+        team_id,
+        player.position,
+        player.bye,
+        player.rank,
+        player.positionrank
       );
+      
+      placeholders.push(`($${paramIndex}, $${paramIndex + 1}, $${paramIndex + 2}, $${paramIndex + 3}, $${paramIndex + 4}, $${paramIndex + 5})`);
+      paramIndex += 6;
+    });
+    
+    if (values.length > 0) {
+      // Execute a single batch insert
+      const query = `
+        INSERT INTO players (name, team_id, position, bye, rank, positionrank)
+        VALUES ${placeholders.join(', ')}
+      `;
+      await client.query(query, values);
     }
-
+    
     await client.query("COMMIT");
   } catch (err) {
     await client.query("ROLLBACK");
@@ -95,7 +116,15 @@ fileUploadController.handleFileUpload = async (file) => {
     
     // Extract and process players
     const players = extractPlayersFromExcel(sheet);
+    
+    // Clear team cache if needed (in case of team changes)
+    teamCache = null;
+    
+    // Time the database operation
+    const startTime = Date.now();
     await savePlayersToDatabase(players);
+    const endTime = Date.now();
+    console.log(`Database operation took ${endTime - startTime}ms`);
     
     return {
       success: true, 
