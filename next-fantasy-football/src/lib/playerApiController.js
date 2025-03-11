@@ -30,11 +30,17 @@ export async function getAllPlayers() {
 }
 
 export async function getServerSidePlayersData() {
-  const playersData = await getAllPlayers();
-  
-  if (!playersData.success) {
-    throw new Error('Failed to load players data');
-  }
+  try {
+    const playersData = await getAllPlayers();
+    
+    if (!playersData.success) {
+      console.error("Failed to load players data");
+      return []; // Return empty array instead of throwing
+    }
 
-  return playersData.players;
+    return playersData.players;
+  } catch (error) {
+    console.error("Error fetching server-side data:", error);
+    return []; // Return empty array on error
+  }
 }
